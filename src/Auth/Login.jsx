@@ -4,10 +4,22 @@ import { Link, useNavigate } from "react-router-dom";
 import useAuthProvider from "../Hooks/useAuthProvider";
 
 const Login = () => {
-  const { register, handleSubmit, formState: { errors } } = useForm();
-  const { signInUser, signWithGoogle, loading } = useAuthProvider();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+  const {user, signInUser, googleSignIn, loading,setLoading } = useAuthProvider();
+ 
+
   const navigate = useNavigate();
 
+  if(user){
+    navigate('/tasks')
+  }
+  else{
+    navigate('/')
+  }
   // Handle email/password login
   const onSubmit = async (data) => {
     try {
@@ -19,13 +31,17 @@ const Login = () => {
   };
 
   // Handle Google login
-  const handleGoogleLogin = async () => {
-    try {
-      await signWithGoogle();
-      navigate("/tasks"); // Redirect to tasks page after Google sign-in
-    } catch (error) {
-      console.error("Google Sign-In Error:", error.message);
-    }
+  const handleGoogleLogin =  () => {
+    googleSignIn()
+    .then(res =>{
+      console.log(res.user)
+      navigate("/tasks")
+      setLoading(false)
+    })
+    .catch(error=>{
+      console.error(error.message)
+    })
+    
   };
 
   return (
@@ -65,17 +81,25 @@ const Login = () => {
                 <input
                   type="password"
                   placeholder="Enter your password"
-                  {...register("password", { required: "Password is required" })}
+                  {...register("password", {
+                    required: "Password is required",
+                  })}
                   className="input input-bordered"
                 />
                 {errors.password && (
-                  <p className="text-red-500 text-sm">{errors.password.message}</p>
+                  <p className="text-red-500 text-sm">
+                    {errors.password.message}
+                  </p>
                 )}
               </div>
 
               {/* Login Button */}
               <div className="form-control mt-4">
-                <button type="submit" className="btn btn-primary" disabled={loading}>
+                <button
+                  type="submit"
+                  className="btn btn-primary"
+                  disabled={loading}
+                >
                   {loading ? "Logging in..." : "Login"}
                 </button>
               </div>
@@ -84,7 +108,7 @@ const Login = () => {
             {/* Google Login Button */}
             <div className="text-center mb-4">
               <button
-                onClick={()=>handleGoogleLogin}
+                onClick={handleGoogleLogin}
                 className="btn btn-outline w-[83%] mx-auto"
                 disabled={loading}
               >
