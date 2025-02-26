@@ -1,5 +1,5 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import useAuthProvider from "../../Hooks/useAuthProvider";
 
 const Navbar = () => {
@@ -20,8 +20,8 @@ const Navbar = () => {
   };
 
   return (
-    <div className="flex items-center justify-between px-5 bg-gray-100 w-full h-14 shadow-md">
-      <h1 className="text-xl font-bold">Task Manager</h1>
+    <div className="flex items-center justify-between px-5 mb-2 bg-gray-100 w-full h-14 shadow-md">
+      <Link to={'/tasks'} className="text-xl font-bold">Task Manager</Link>
       {user && (
         <button onClick={handleLogout} className="btn btn-primary">
           Log out
